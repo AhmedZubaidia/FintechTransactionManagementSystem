@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7008ffd1-24fe-4bbc-8b4b-5abe3b6628ad" name="Changes" comment="adding the databases and Basic API Endpoints, and test them by postman">
-      <change afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+    <list default="true" id="7008ffd1-24fe-4bbc-8b4b-5abe3b6628ad" name="Changes" comment="creating docker file for webiste">
+      <change afterPath="$PROJECT_DIR$/FintechTransactionManagementSystem/telegram_bot.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/instance/myLearningApp.db" beforeDir="false" afterPath="$PROJECT_DIR$/instance/myLearningApp.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FintechTransactionManagementSystem/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/FintechTransactionManagementSystem/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FintechTransactionManagementSystem/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/FintechTransactionManagementSystem/routes.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,6 +36,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="CI/CD-with-GitHub-Actions" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -61,28 +67,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;Flask server.Flask (app.py).executor&quot;: &quot;Run&quot;,
-    &quot;Flask server.Flask (myLearningApp/app.py).executor&quot;: &quot;Run&quot;,
-    &quot;Flask server.Flask (myLearningApp/run.py).executor&quot;: &quot;Run&quot;,
-    &quot;Flask server.Flask (run.py).executor&quot;: &quot;Run&quot;,
-    &quot;Flask server.flaskProject.executor&quot;: &quot;Run&quot;,
-    &quot;Python.python.exe.executor&quot;: &quot;Run&quot;,
-    &quot;Python.run.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;database__BasicAPIEndpoints&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/My Files/Fintech Transaction Management System/FintechTransactionManagementSystem&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "Flask server.Flask (app.py).executor": "Run",
+    "Flask server.Flask (myLearningApp/app.py).executor": "Run",
+    "Flask server.Flask (myLearningApp/run.py).executor": "Run",
+    "Flask server.Flask (run.py).executor": "Run",
+    "Flask server.flaskProject.executor": "Run",
+    "Python.python.exe.executor": "Run",
+    "Python.run.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "Telegram-Integration",
+    "last_opened_file_path": "C:/Users/ahmad/Desktop/Year 5/Gradution project/dense-video-captioning-pytorch",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\My Files\Cods\flaskProject" />
@@ -189,7 +195,8 @@
       <workItem from="1721618387430" duration="912000" />
       <workItem from="1721620005841" duration="449000" />
       <workItem from="1721620463916" duration="11437000" />
-      <workItem from="1721696983330" duration="3720000" />
+      <workItem from="1721696983330" duration="4374000" />
+      <workItem from="1721758260567" duration="11601000" />
     </task>
     <task id="LOCAL-00001" summary="first">
       <option name="closed" value="true" />
@@ -231,7 +238,23 @@
       <option name="project" value="LOCAL" />
       <updated>1721662572563</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="creating docker file for webiste">
+      <option name="closed" value="true" />
+      <created>1721701077175</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1721701077175</updated>
+    </task>
+    <task id="LOCAL-00007" summary="creating docker file for webiste">
+      <option name="closed" value="true" />
+      <created>1721701087062</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1721701087062</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -240,11 +263,12 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="first" />
     <MESSAGE value="adding the databases and Basic API Endpoints, and test them by postman" />
-    <option name="LAST_COMMIT_MESSAGE" value="adding the databases and Basic API Endpoints, and test them by postman" />
+    <MESSAGE value="creating docker file for webiste" />
+    <option name="LAST_COMMIT_MESSAGE" value="creating docker file for webiste" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/flaskProject$flaskProject.coverage" NAME="flaskProject Coverage Results" MODIFIED="1721600810963" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/flaskProject$run.coverage" NAME="run Coverage Results" MODIFIED="1721661004344" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/flaskProject$run.coverage" NAME="run Coverage Results" MODIFIED="1721809724369" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/flaskProject$Flask__myLearningApp_run_py_.coverage" NAME="Flask (run.py) Coverage Results" MODIFIED="1721605859420" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/flaskProject$Flask__run_py_.coverage" NAME="Flask (run.py) Coverage Results" MODIFIED="1721619027092" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/flaskProject$Flask__app_py_.coverage" NAME="Flask (myLearningApp/app.py) Coverage Results" MODIFIED="1721605359455" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

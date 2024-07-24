@@ -2,6 +2,7 @@ from flask import request, jsonify, make_response
 from FintechTransactionManagementSystem.models import User, Transaction
 from FintechTransactionManagementSystem.app import db
 from werkzeug.security import generate_password_hash, check_password_hash
+from FintechTransactionManagementSystem.telegram_bot import send_telegram_message
 
 def register_routes(app, db):
     @app.route('/')
@@ -37,6 +38,7 @@ def register_routes(app, db):
         username = data.get('username')
         email = data.get('email')
         password = data.get('password')
+        chat_id = '6526202532'
 
         if User.query.filter_by(email=email).first():
             return make_response(jsonify({'message': 'User already exists'}), 400)
@@ -45,6 +47,8 @@ def register_routes(app, db):
         new_user = User(username=username, email=email, password_hash=hashed_password)
         db.session.add(new_user)
         db.session.commit()
+
+        send_telegram_message(chat_id, f"Welcome {username}! You have successfully registered.")
 
         return make_response(jsonify({'message': 'User registered successfully'}), 201)
 
@@ -68,10 +72,13 @@ def register_routes(app, db):
         amount = data.get('amount')
         category = data.get('category')
         description = data.get('description')
+        chat_id = '6526202532'
 
         new_transaction = Transaction(user_id=user_id, amount=amount, category=category, description=description)
         db.session.add(new_transaction)
         db.session.commit()
+
+        send_telegram_message(chat_id, f"Transaction created: {amount} in {category} category.")
 
         return make_response(jsonify({'message': 'Transaction created successfully'}), 201)
 
@@ -127,3 +134,12 @@ def register_routes(app, db):
         db.session.commit()
 
         return make_response(jsonify({'message': 'User deleted successfully'}), 200)
+
+    @app.route('/send_test_message', methods=['POST'])
+    def send_test_message():
+        data = request.get_json()
+        chat_id = '6526202532'
+        message = data.get('message')
+
+        response = send_telegram_message(chat_id, message)
+        return make_response(jsonify(response), 200)
