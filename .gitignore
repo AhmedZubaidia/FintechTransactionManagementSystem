@@ -2,3 +2,4 @@
 .venv
 *.json
 migrations/
+instance/
