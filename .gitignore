@@ -3,3 +3,4 @@
 *.json
 migrations/
 instance/
+config.py
