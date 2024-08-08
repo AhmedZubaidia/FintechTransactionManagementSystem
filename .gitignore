@@ -2,3 +2,5 @@
 .venv
 *.json
 migrations/
+instance/
+config.py
