@@ -29,4 +29,4 @@ def execute(username, email, password):
     # Notify about the new user
     send_new_user_notification(username,chat_id)
 
-    return dict(message='User registered successfully'), 201
+    return dict(message='User registered successfully')

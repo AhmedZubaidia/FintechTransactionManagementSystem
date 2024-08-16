@@ -1,3 +1,4 @@
+import traceback
 from functools import wraps
 from flask import request, jsonify, make_response, current_app
 from flask_jwt_extended import jwt_required
@@ -5,6 +6,7 @@ from jwt import ExpiredSignatureError
 from marshmallow import ValidationError
 
 from app.schemas.message_schema import MessageSchema
+from app.third_parties.telegram.send_long_message import send_long_message
 from app.third_parties.telegram.send_message import send_message
 from app.utils.exceptions import ApplicationError, ConflictError, LoginError, NotFoundError, ProfileError
 
@@ -41,21 +43,13 @@ def custom_route(bp, rule, *, schema=None, require_auth=False, **options):
 
                 # Execute the original route function with the combined data
                 response = f(data)
-                message_schema = MessageSchema()
 
                 # Serialize the output using the schema if provided
-                if isinstance(response, dict):
-                    response = message_schema.dump(response)
+                if not isinstance(response, dict):
+                    response = schema(many=True if isinstance(response, list) else False).dump(response)
 
                 # Determine the appropriate status code based on context or keys in response
                 status_code = 200  # Default to 200 OK
-                if 'message' in response:
-                    if 'created' in response['message'].lower() or 'registered' in response['message'].lower():
-                        status_code = 201  # Created
-                    elif 'deleted' in response['message'].lower():
-                        status_code = 204  # No Content (no need to return content)
-                    elif 'updated' in response['message'].lower():
-                        status_code = 200  # OK, but you might use 204 No Content for some APIs
 
                 return make_response(jsonify(response), status_code)
 
@@ -65,16 +59,16 @@ def custom_route(bp, rule, *, schema=None, require_auth=False, **options):
                     status_code = 401
                     error_message = "Token has expired"
 
-                elif isinstance(e, (
-                        ValidationError, ApplicationError, ConflictError, LoginError, NotFoundError, ProfileError)):
+                elif hasattr(e, 'is_application_error'):
                     status_code = getattr(e, 'status_code', 400)
-                    error_message = str(e) if not isinstance(e, ValidationError) else e.messages
+                    error_message = e.message
 
                 else:
                     # For any unexpected errors, use a generic message and status code 500
                     chat_id = current_app.config['TELEGRAM_CRITICAL_ERRORS_CHAT_ID']
-                    error_message = f"An unexpected error occurred: {str(e)}"
-                    send_message(error_message, chat_id)
+                    tb = traceback.format_exc()
+                    error_message = f"An unexpected error occurred: {str(e)}\nTraceback:\n{tb}"
+                    send_long_message(error_message, chat_id)
 
                     status_code = 500
                     error_message = "An unexpected error occurred"
