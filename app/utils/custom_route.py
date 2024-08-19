@@ -3,12 +3,7 @@ from functools import wraps
 from flask import request, jsonify, make_response, current_app
 from flask_jwt_extended import jwt_required
 from jwt import ExpiredSignatureError
-from marshmallow import ValidationError
-
-from app.schemas.message_schema import MessageSchema
 from app.third_parties.telegram.send_long_message import send_long_message
-from app.third_parties.telegram.send_message import send_message
-from app.utils.exceptions import ApplicationError, ConflictError, LoginError, NotFoundError, ProfileError
 
 
 def custom_route(bp, rule, *, schema=None, require_auth=False, **options):
@@ -61,11 +56,12 @@ def custom_route(bp, rule, *, schema=None, require_auth=False, **options):
 
                 elif hasattr(e, 'is_application_error'):
                     status_code = getattr(e, 'status_code', 400)
-                    error_message = e.message
+                    error_message = str(e)
 
                 else:
                     # For any unexpected errors, use a generic message and status code 500
-                    chat_id = current_app.config['TELEGRAM_CRITICAL_ERRORS_CHAT_ID']
+                    chat_id = "@erorr_notifaction"
+
                     tb = traceback.format_exc()
                     error_message = f"An unexpected error occurred: {str(e)}\nTraceback:\n{tb}"
                     send_long_message(error_message, chat_id)

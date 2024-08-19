@@ -2,13 +2,13 @@ from flask import jsonify, make_response, request, current_app
 from app import db
 from app.models.user import User
 from app.third_parties.telegram.send_user_deletion_notification import send_user_deletion_notification
-from app.utils.exceptions import ProfileError
+from app.utils.exceptions import appProfileError
 
 
 def execute(user_id):
     user = User.query.get(user_id)
     if not user:
-        raise ProfileError('User not found')
+        raise appProfileError('User not found')
 
     db.session.delete(user)
     db.session.commit()

@@ -1,6 +1,7 @@
+from flask import has_request_context
+from flask_jwt_extended import get_jwt_identity
 from datetime import datetime
 from app import db
-from flask_jwt_extended import get_jwt_identity
 
 
 class BaseModel(db.Model):
@@ -13,10 +14,13 @@ class BaseModel(db.Model):
 
     def save(self, current_user_id=None):
         if current_user_id is None:
-            try:
-                current_user_id = get_jwt_identity()
-            except Exception as e:
-                raise RuntimeError("JWT identity not available. Ensure this method is called in a request context.")
+            if has_request_context():
+                try:
+                    current_user_id = get_jwt_identity()
+                except Exception as e:
+                    raise RuntimeError("JWT identity not available. Ensure this method is called in a request context.")
+            else:
+                raise RuntimeError("Request context is required to automatically determine current_user_id.")
 
         if not self.id:  # If the record is new
             self.created_by = current_user_id

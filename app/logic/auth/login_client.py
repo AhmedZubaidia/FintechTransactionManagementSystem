@@ -3,7 +3,8 @@ from flask_jwt_extended import create_access_token
 from werkzeug.security import check_password_hash
 from app.models.user import User
 from app.third_parties.telegram.send_login_notification import send_login_notification
-from app.utils.exceptions import LoginError
+from app.utils.exceptions import appLoginError
+
 
 def execute(email, password):
     user = User.query.filter_by(email=email).first()
@@ -13,4 +14,4 @@ def execute(email, password):
         access_token = create_access_token(identity=user.id)
         return dict(message=f'Login successful    {access_token}  ')
 
-    raise LoginError('Invalid email or password')
+    raise appLoginError('Invalid email or password')
