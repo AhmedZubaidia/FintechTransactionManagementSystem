@@ -1,14 +1,14 @@
 from flask import jsonify, make_response
 from app import db
 from app.models.transaction import Transaction
-from app.utils.exceptions import NotFoundError
+from app.utils.exceptions import appNotFoundError
 
 
 def execute(transaction_id):
 
     transaction = Transaction.query.get(transaction_id)
     if not transaction:
-        raise NotFoundError(f"Transaction with id {transaction_id} not found")
+        raise appNotFoundError(f"Transaction with id {transaction_id} not found")
 
     db.session.delete(transaction)
     db.session.commit()

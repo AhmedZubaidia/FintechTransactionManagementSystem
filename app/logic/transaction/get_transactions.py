@@ -10,4 +10,4 @@ def execute():
     transactions_list = [
         {'id': t.id, 'user_id': t.user_id, 'amount': t.amount, 'category': t.category, 'description': t.description,
          'timestamp': t.timestamp} for t in transactions]
-    return transactions_list, 200
+    return transactions_list

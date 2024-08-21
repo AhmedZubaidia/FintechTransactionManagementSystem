@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:latest
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_DATABASE: ${DATABASE_NAME}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - mynetwork  # Connect the MySQL container to 'mynetwork'
+
+  flask-app:
+    build: .
+    container_name: flask-app-container
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    volumes:
+      - "D:/My Files/Cods/flaskProject:/app"
+    depends_on:
+      - db
+    networks:
+      - mynetwork  # Connect the Flask app container to 'mynetwork'
+
+volumes:
+  mysql_data:
+
+networks:
+  mynetwork:
+    driver: bridge
