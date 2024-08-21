@@ -1,18 +1,24 @@
-from pickle import GET
+from flask import Blueprint
 
-from flask import Blueprint, request, jsonify, make_response
-from flask_jwt_extended import create_access_token, jwt_required
-from app.logic.auth import login_client, register_client, get_clients, delete_client
+from app.schemas.user_schema import UserSchema
 from app.utils.custom_route import custom_route
 
 bp = Blueprint('profile', __name__)
 
 
-@custom_route(bp, '/users', methods=['GET'], require_auth=True)
+@custom_route(bp, '/users', methods=['GET'], schema=UserSchema, require_auth=True)
 def get_users(data):
-    return get_clients.execute()
+    from app.logic.auth.get_clients import execute
+    return execute()
 
 
 @custom_route(bp, '/users/<int:id>', methods=['DELETE'], require_auth=True)
 def delete_user_route(data):
-    return delete_client.execute(data['id'])
+    from app.logic.auth.delete_client import execute
+    return execute(data['id'])
+
+
+@custom_route(bp, '/users/<int:id>', methods=['PUT'],schema=UserSchema, require_auth=True)
+def update_user_route(data):
+    from app.logic.auth.update_user import execute
+    return execute(data['id'], **data)

@@ -4,7 +4,6 @@ from app.utils.exceptions import appNotFoundError
 
 
 def execute(transaction_id, amount=None, category=None, description=None, transaction_type=None):
-
     transaction = Transaction.query.get(transaction_id)
 
     if not transaction:
@@ -28,6 +27,3 @@ def execute(transaction_id, amount=None, category=None, description=None, transa
     db.session.commit()
 
     return {'message': 'Transaction updated successfully'}
-
-
-

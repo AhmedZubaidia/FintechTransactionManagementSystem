@@ -4,7 +4,6 @@ from app.models.transaction import Transaction
 
 
 def execute(user_id, amount, category, description=None, transaction_type=None):
-
     data = {
         'user_id': user_id,
         'amount': amount,
@@ -13,9 +12,13 @@ def execute(user_id, amount, category, description=None, transaction_type=None):
         'type': transaction_type
     }
 
-    # Create the transaction object
     new_transaction = Transaction(**data)
     db.session.add(new_transaction)
+    db.session.commit()
+
+    new_transaction.created_by = user_id
+    new_transaction.modified_by = user_id
+
     db.session.commit()
 
     return new_transaction

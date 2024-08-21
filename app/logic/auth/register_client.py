@@ -1,5 +1,6 @@
 from flask import current_app
 from werkzeug.security import generate_password_hash
+from flask_jwt_extended import create_access_token
 from app import db
 from app.models.user import User
 from app.third_parties.telegram.send_new_user_notification import send_new_user_notification
@@ -21,11 +22,19 @@ def execute(username, email, password):
     # Create a new user
     new_user = User(username=username, email=email, password_hash=hashed_password)
 
-    # Since there's no JWT during registration, do not set created_by and modified_by
-    # These can be set to None or some default value if needed
-
+    # Commit the new user to the database to generate the user ID
     db.session.add(new_user)
     db.session.commit()
+
+    # Now that the user has been committed, set the created_by and modified_by fields
+    new_user.created_by = new_user.id  # Set the created_by to the user's own ID
+    new_user.modified_by = new_user.id  # Set the modified_by to the user's own ID
+
+    # Commit the changes to update the user record
+    db.session.commit()
+
+    # Generate a token for the user (for authentication purposes after registration)
+    token_id = create_access_token(identity=new_user.id)
 
     chat_id = current_app.config['TELEGRAM_CHAT_ID']
 
