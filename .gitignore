@@ -1,8 +1,8 @@
 .idea/
 .venv
+.env
 *.json
 migrations/
 instance/
 config.py
 notes_within_the_meeting/
-.env
