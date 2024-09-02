@@ -1,13 +1,14 @@
 name: Docker CI/CD
 
 on:
-  push:
-    branches:
-      - main  # Trigger the action only on pushes to the 'main' branch
+  pull_request:
+    types: [closed]
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
+    if: github.event.pull_request.merged == true  # Only proceed if the pull request is merged
 
     steps:
     - name: Checkout code
@@ -35,4 +36,7 @@ jobs:
     - name: Deploy application
       run: |
         docker run --env-file .env -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/flask-app:latest
-        docker run -e MYSQL_ROOT_PASSWORD=${{ secrets.DATABASE_PASSWORD }} -e MYSQL_DATABASE=${{ secrets.DATABASE_NAME }} -p 3306:3306 -d ${{ secrets.DOCKER_USERNAME }}/mysql-container:latest
+
+        docker run -d -p 3306:3306 \
+        --env-file .env \
+        ${{ secrets.DOCKER_USERNAME }}/mysql-container:latest
