@@ -4,3 +4,5 @@
 migrations/
 instance/
 config.py
+notes_within_the_meeting/
+.env

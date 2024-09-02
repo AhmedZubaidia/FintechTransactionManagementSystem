@@ -1,4 +1,3 @@
-# app/models/user.py
 from app import db
 from app.models.base_model import BaseModel
 
@@ -9,11 +8,19 @@ class User(BaseModel):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
 
+    session_id = db.Column(db.String(255), nullable=True)
+    device_id = db.Column(db.String(255), nullable=True)
+    preferred_language = db.Column(db.String(10), nullable=True)
+    currency = db.Column(db.String(10), nullable=True)
+
+    # Add the roles attribute
+    roles = db.Column(db.String(255), nullable=True)
+
     def __repr__(self):
         return f'<User {self.username}>'
 
 
-# Late import to avoid circular dependency
-from app.models.transaction import Transaction
+# The relationship is added after the UserTransaction class is defined
+from app.models.usertransaction import UserTransaction
 
-User.transactions = db.relationship('Transaction', back_populates='user', lazy=True)
+User.transactions = db.relationship('UserTransaction', back_populates='user', lazy=True)

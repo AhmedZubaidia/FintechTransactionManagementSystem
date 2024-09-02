@@ -1,6 +1,6 @@
 from flask import jsonify, make_response
 from app import db
-from app.models.transaction import Transaction
+from app.models.usertransaction import UserTransaction
 
 
 def execute(user_id, amount, category, description=None, transaction_type=None):
@@ -12,7 +12,7 @@ def execute(user_id, amount, category, description=None, transaction_type=None):
         'type': transaction_type
     }
 
-    new_transaction = Transaction(**data)
+    new_transaction = UserTransaction(**data)
     db.session.add(new_transaction)
     db.session.commit()
 

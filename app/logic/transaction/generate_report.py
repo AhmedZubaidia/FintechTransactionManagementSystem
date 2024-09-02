@@ -1,8 +1,8 @@
-from app.models.transaction import Transaction
+from app.models.usertransaction import UserTransaction
 
 
 def execute(user_id):
-    transactions = Transaction.query.filter_by(user_id=user_id).all()
+    transactions = UserTransaction.query.filter_by(user_id=user_id).all()
 
     income = sum(t.amount for t in transactions if t.type == 'income')
     expenses = sum(t.amount for t in transactions if t.type == 'expense')
