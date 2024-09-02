@@ -12,16 +12,16 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3 
 
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      uses: docker/setup-buildx-action@v3 
 
     - name: Log in to Docker Hub
-      uses: docker/login-action@v2
+      uses: docker/login-action@v3  
       with:
-        username: ${{ secrets.DOCKER_USERNAME }}  # Your Docker Hub username stored as a secret
-        password: ${{ secrets.DOCKER_TOKEN }}     # Your Docker Hub token stored as a secret
+        username: ${{ secrets.DOCKER_USERNAME }}  
+        password: ${{ secrets.DOCKER_TOKEN }}     
 
     - name: Set up Docker context
       run: docker context create my-context --docker "host=unix:///var/run/docker.sock"
@@ -36,7 +36,6 @@ jobs:
     - name: Deploy application
       run: |
         docker run --env-file .env -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/flask-app:latest
-
         docker run -d -p 3306:3306 \
         --env-file .env \
         ${{ secrets.DOCKER_USERNAME }}/mysql-container:latest
