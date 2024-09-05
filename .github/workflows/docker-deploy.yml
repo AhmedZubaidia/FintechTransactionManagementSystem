@@ -30,12 +30,4 @@ jobs:
       run: |
         docker buildx build --push --platform linux/amd64,linux/arm64 \
         -t ${{ secrets.DOCKER_USERNAME }}/flask-app:latest .
-        docker buildx build --push --platform linux/amd64,linux/arm64 \
-        -t ${{ secrets.DOCKER_USERNAME }}/mysql-container:latest -f Dockerfile.mysql .
 
-    - name: Deploy application
-      run: |
-        docker run --env-file .env -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/flask-app:latest
-        docker run -d -p 3306:3306 \
-        --env-file .env \
-        ${{ secrets.DOCKER_USERNAME }}/mysql-container:latest
