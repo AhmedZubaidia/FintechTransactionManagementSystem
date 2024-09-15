@@ -1,5 +1,8 @@
 import enum
 from sqlalchemy import Enum as SQLAlchemyEnum
+from datetime import datetime
+from app import db
+from sqlalchemy import CheckConstraint
 
 
 # Define Enum for role
@@ -14,14 +17,7 @@ class UserType(enum.Enum):
     ADMIN = "Admin"
 
 
-from datetime import datetime
-from app import db
-from sqlalchemy import CheckConstraint
-from sqlalchemy import Enum as SQLAlchemyEnum
-
-
 # Assuming UserRole and UserType enums are imported here
-
 class Auth(db.Model):
     __tablename__ = 'auth'
     id = db.Column(db.Integer, primary_key=True)
@@ -34,7 +30,8 @@ class Auth(db.Model):
     is_active = db.Column(db.Boolean, default=True, nullable=False)
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    # Add cascading delete for user_id
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
 
     # User type as Enum
     user_type = db.Column(SQLAlchemyEnum(UserType), nullable=False, default=UserType.CLIENT)
@@ -43,7 +40,7 @@ class Auth(db.Model):
     last_login_ip = db.Column(db.String(45), nullable=True)
 
     # Relationship with User model
-    user = db.relationship('User', backref=db.backref('auth', lazy=True))
+    user = db.relationship('User', backref=db.backref('auth', lazy=True, cascade="all, delete-orphan"))
 
     def __repr__(self):
         return f'<Auth {self.username} ({self.role.value})>'

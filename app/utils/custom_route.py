@@ -48,11 +48,37 @@ def custom_route(bp, rule, *, schema=None, require_auth=False, allowed_roles=Non
 
                 # If pagination is enabled, get page and per_page parameters
                 if paginate:
-                    page = int(request.args.get('page', 1))
-                    per_page = int(request.args.get('per_page', 10))
+                    try:
+                        page = max(int(request.args.get('page', 1)), 1)  # Default to 1, must be positive
+                        per_page = max(int(request.args.get('per_page', 10)), 1)  # Default to 10, must be positive
+                    except ValueError:
+                        raise appBadRequestError("Page and per_page must be valid positive integers.")
+
                     response, total_items = f(data, page, per_page)
+
+                    # Calculate total pages and add pagination metadata
+                    total_pages = ceil(total_items / per_page)
+                    paginated_response = {
+                        "items": response,
+                        "pagination": {
+                            "current_page": page,
+                            "per_page": per_page,
+                            "total_pages": total_pages,
+                            "total_items": total_items
+                        }
+                    }
+                    response = paginated_response
+
+                elif request.method in ['DELETE', 'GET']:
+                    # Don't require JSON, just use URL parameters
+                    data = request.args.to_dict()
+
+                # Only pass `data` to the function if it's not a DELETE request
+                if request.method == 'DELETE':
+                    response = f(**kwargs)  # No `data` for DELETE
+
                 else:
-                    response = f(data)
+                    response = f(**kwargs, data=data)  # Pass both kwargs and data to the function
 
                 # Serialize the output using the schema if provided
                 if not isinstance(response, dict):
@@ -83,4 +109,3 @@ def custom_route(bp, rule, *, schema=None, require_auth=False, allowed_roles=Non
         return wrapped
 
     return decorator
-

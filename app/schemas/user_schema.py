@@ -1,5 +1,6 @@
 from marshmallow import Schema, fields, validate
 
+
 # Schema for registering a new user
 class RegisterSchema(Schema):
     username = fields.Str(required=True, validate=[validate.Length(min=1, max=80)])
@@ -13,9 +14,8 @@ class LoginSchema(Schema):
     password = fields.Str(required=True, validate=[validate.Length(min=6)])
 
 
-# Schema for representing user data without any nested transactions
 class UserSchema(Schema):
-    id = fields.Int(dump_only=True)
+    id = fields.Int()
     username = fields.Str()
     email = fields.Email()
     full_name = fields.Str()
