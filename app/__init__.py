@@ -7,7 +7,7 @@ from config import Config
 
 db = SQLAlchemy()
 migrate = Migrate()
-babel = Babel()  # Initialize Flask-Babel
+babel = Babel()
 
 
 def create_app(config_class=Config):
@@ -17,15 +17,19 @@ def create_app(config_class=Config):
     db.init_app(app)
     migrate.init_app(app, db)
     jwt = JWTManager(app)
-    babel.init_app(app)  # Initialize Flask-Babel with the app
+    babel.init_app(app)
 
+    # Import models so they are registered properly with SQLAlchemy
+    from app.models.auth_model import Auth
+    from app.models.user_model import User  # Import User model here
+    from app.models.transaction_model import TransactionModel  # Import TransactionModel as well
+
+    # Register blueprints
     from app.routes.user.auth.apis import bp as auth_bp
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
 
     from app.routes.user.profile.apis import bp as profile_bp
     app.register_blueprint(profile_bp, url_prefix='/api')
-
-    from app.models.auth_model import Auth
 
     from app.routes.transactions.client.apis import bp as transaction_bp
     app.register_blueprint(transaction_bp, url_prefix='/api/transactions')

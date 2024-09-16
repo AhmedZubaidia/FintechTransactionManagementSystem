@@ -20,7 +20,6 @@ def execute(email, password):
 
         # Create the access token with additional user information
         additional_claims = {
-            "user_id": user.id,
             "username": user.username,
             "email": user.email,
             "role": auth.role.value,
