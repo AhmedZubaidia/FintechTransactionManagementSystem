@@ -78,7 +78,11 @@ def custom_route(bp, rule, *, schema=None, require_auth=False, allowed_roles=Non
                     response = f(**kwargs)  # No `data` for DELETE
 
                 else:
-                    response = f(**kwargs, data=data)  # Pass both kwargs and data to the function
+                    # Check if the wrapped function (f) accepts the 'data' argument
+                    if 'data' in f.__code__.co_varnames:
+                        response = f(**kwargs, data=data)  # Pass data if the function expects it
+                    else:
+                        response = f(**kwargs)  # Call the function without data if it's not expected
 
                 # Serialize the output using the schema if provided
                 if not isinstance(response, dict):

@@ -4,22 +4,20 @@ from app.models.transaction_model import TransactionModel
 
 def execute():
     client_id = get_jwt_identity()  # Get the client ID from the JWT
+
+    # Fetch all transactions for the client
     transactions = TransactionModel.query.filter_by(user_id=client_id).all()
 
-    credit_total = sum(t.amount for t in transactions if t.type == "credit")
-    debit_total = sum(t.amount for t in transactions if t.type == "debit")
-    balance = credit_total - debit_total
+    # Create a list of transactions using the `to_dict()` method for each transaction
+    transactions_report = [transaction.to_dict() for transaction in transactions]
 
-    last_transaction = max(transactions, key=lambda t: t.timestamp, default=None)
-
+    # Prepare the final report
     report = {
         "user": {
             "id": client_id,
         },
-        "credit": credit_total,
-        "debit": debit_total,
-        "balance": balance,
-        "last_transaction_datetime": last_transaction.timestamp if last_transaction else None
+        "transactions": transactions_report,  # Include all transactions
+        "total_transactions": len(transactions_report)  # Optionally, include the total count
     }
 
-    return report, 200
+    return report
