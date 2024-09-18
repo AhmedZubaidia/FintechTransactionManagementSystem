@@ -1,8 +1,9 @@
-from flask import jsonify
+from flask import jsonify, current_app
 from flask_jwt_extended import get_jwt_identity
 from app import db
 from app.models.transaction_model import TransactionModel
 from app.models.user_model import User
+from app.third_parties.telegram.send_message import send_message
 from app.utils.exceptions import appNotFoundError
 from app.models.transaction_model import TransactionCategory, TransactionType
 

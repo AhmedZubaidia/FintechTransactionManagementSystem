@@ -42,4 +42,7 @@ def create_app(config_class=Config):
     from app.routes.transactions.admin.apis import bp as admin_transaction_bp
     app.register_blueprint(admin_transaction_bp, url_prefix='/api/transactions/admin')
 
+    from app.utils.summary_scheduler import setup_user_scheduler
+    setup_user_scheduler(app)
+
     return app
