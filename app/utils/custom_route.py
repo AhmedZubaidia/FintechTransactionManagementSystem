@@ -1,11 +1,10 @@
 import traceback
 from functools import wraps
-from flask import request, jsonify, make_response, current_app
+from flask import request, jsonify, make_response
 from flask_jwt_extended import verify_jwt_in_request, get_jwt
 from jwt import ExpiredSignatureError
-from app.third_parties.telegram.send_long_message import send_long_message
-from app.utils.exceptions import ApplicationError, appForbiddenError, appBadRequestError
-from math import ceil  # For calculating total pages
+from math import ceil
+from app.utils.exceptions import appForbiddenError, appBadRequestError, ApplicationError
 
 
 def custom_route(bp, rule, *, schema=None, require_auth=False, allowed_roles=None, paginate=False, **options):
@@ -26,10 +25,10 @@ def custom_route(bp, rule, *, schema=None, require_auth=False, allowed_roles=Non
 
                 data = {}
 
-                # Only attempt to load JSON data if Content-Type is 'application/json'
+                # Only load JSON data if Content-Type is 'application/json'
                 if request.content_type == 'application/json':
                     data = request.get_json() or {}
-                elif request.method in ['POST', 'PUT', 'PATCH']:  # Methods that typically expect a body
+                elif request.method in ['POST', 'PUT', 'PATCH']:  # Methods that require a body
                     raise appBadRequestError("Content-Type must be 'application/json'")
 
                 # Add URL parameters (kwargs)
@@ -64,11 +63,11 @@ def custom_route(bp, rule, *, schema=None, require_auth=False, allowed_roles=Non
                     }
                     return make_response(jsonify(paginated_response), 200)
 
-                # If DELETE request, just pass kwargs (no data)
+                # For DELETE request, just pass kwargs (no data)
                 if request.method == 'DELETE':
                     response = f(**kwargs)
                 else:
-                    # Check if the wrapped function accepts 'data'
+                    # Check if the wrapped function expects 'data'
                     if 'data' in f.__code__.co_varnames:
                         response = f(data=data, **kwargs)  # Pass `data` if the function expects it
                     else:
@@ -77,15 +76,19 @@ def custom_route(bp, rule, *, schema=None, require_auth=False, allowed_roles=Non
                 return make_response(jsonify(response), 200)
 
             except ExpiredSignatureError:
-                return make_response(jsonify({'errors': "Token has expired"}), 401)
+                # Raise forbidden error when token is expired
+                raise appForbiddenError("Access forbidden: token expired")
 
             except ApplicationError as e:
+                # Handle custom application errors
                 return make_response(jsonify({'errors': str(e)}), e.status_code)
 
             except Exception as e:
+                # Catch-all for unexpected errors, log and return a generic 500 error
                 tb = traceback.format_exc()
                 error_message = f"An unexpected error occurred: {str(e)}\nTraceback:\n{tb}"
-                send_long_message(error_message, "@erorr_notifaction")
+                # This would send the message to the error notification service
+                # send_long_message(error_message, "@error_notification")
                 return make_response(jsonify({'errors': "An unexpected error occurred"}), 500)
 
         bp.add_url_rule(rule, f.__name__, wrapped, **options)
