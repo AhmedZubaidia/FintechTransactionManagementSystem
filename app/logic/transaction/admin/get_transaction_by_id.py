@@ -1,8 +1,9 @@
 from app.models.transaction_model import TransactionModel
+from app.utils.exceptions import appNotFoundError
 
 
 def execute(transaction_id):
     transaction = TransactionModel.query.get(transaction_id)
     if not transaction:
-        return {"error": "Transaction not found"}, 404
-    return transaction.to_dict(), 200
+        raise appNotFoundError(f"Transaction with ID {transaction_id} not found")
+    return transaction.to_dict()
