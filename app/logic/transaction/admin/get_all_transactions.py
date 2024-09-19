@@ -1,14 +1,10 @@
 from app.models.transaction_model import TransactionModel
 
 
-def execute():
-    # Fetch all transactions
-    transactions = TransactionModel.query.all()
+def execute(page, per_page):
 
-    # Convert each transaction to a dictionary
-    all_transactions = [transaction.to_dict() for transaction in transactions]
+    transactions_query = TransactionModel.query.paginate(page=page, per_page=per_page, error_out=False)
 
-    # Return as a dictionary
-    return {
-        "transactions": all_transactions
-    }
+    transactions = [transaction.to_dict() for transaction in transactions_query.items]
+
+    return transactions, transactions_query.total

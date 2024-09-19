@@ -6,10 +6,11 @@ bp = Blueprint('profile', __name__)
 
 
 # Admin Route to get all users
-@custom_route(bp, '/admin/users', methods=['GET'], schema=UserSchema, require_auth=True, allowed_roles="admin")
-def get_all_users_admin(data):
+@custom_route(bp, '/admin/users', methods=['GET'], schema=None, require_auth=True, allowed_roles="admin",
+              paginate=True)
+def get_all_users_admin(page, per_page):
     from app.logic.user.profile.admin.get_all_users import execute
-    return execute()
+    return execute(page, per_page)
 
 
 # Admin Route to delete a user by ID
@@ -17,7 +18,6 @@ def get_all_users_admin(data):
 def delete_user_admin(id):  # Explicitly accept `id`
     from app.logic.user.profile.admin.delete_user import execute
     return execute(id)
-
 
 
 # Admin Route to update a user by ID
