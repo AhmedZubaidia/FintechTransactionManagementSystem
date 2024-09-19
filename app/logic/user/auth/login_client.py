@@ -1,20 +1,32 @@
 from flask import current_app
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt_identity
 from werkzeug.security import check_password_hash
-from app.models.user import User
+
+from app.models.auth_model import Auth
+from app.models.user_model import User
 from app.third_parties.telegram.send_login_notification import send_login_notification
 from app.utils.exceptions import appLoginError
 
 
 def execute(email, password):
+
     user = User.query.filter_by(email=email).first()
+    auth = Auth.query.filter_by(email=email).first()
+
     if user and check_password_hash(user.password_hash, password):
         # Send a login notification via Telegram
         chat_id = current_app.config['TELEGRAM_CHAT_ID']
         send_login_notification(user.username, chat_id)
 
-        # Create the access token with only the user ID
-        access_token = create_access_token(identity=user.id)
+        # Create the access token with additional user information
+        additional_claims = {
+            "user_id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "role": auth.role.value,
+        }
+
+        access_token = create_access_token(identity=user.id, additional_claims=additional_claims)
 
         # Save the encrypted user_id from the JWT token (if needed)
         user.save(jwt_token=access_token)  # Assuming you handle JWT in the save method

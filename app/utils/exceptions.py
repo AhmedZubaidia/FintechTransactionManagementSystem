@@ -6,6 +6,7 @@ class ApplicationError(Exception):
         self.status_code = status_code
 
 
+# Common error classes
 class appNotFoundError(ApplicationError):
     def __init__(self, message='Resource not found'):
         super().__init__(message, 404)
@@ -24,3 +25,13 @@ class appLoginError(ApplicationError):
 class appProfileError(ApplicationError):
     def __init__(self, message='Profile not found'):
         super().__init__(message, 404)
+
+
+class appForbiddenError(ApplicationError):
+    def __init__(self, message='Access forbidden'):
+        super().__init__(message, 403)
+
+
+class appBadRequestError(ApplicationError):
+    def __init__(self, message='Bad request'):
+        super().__init__(message, 400)

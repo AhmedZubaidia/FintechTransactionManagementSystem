@@ -1,6 +1,5 @@
 # here we start with the notes of the meeting of 21st August 2024
 
-# flask_babel or translations i18n library
 #
 # add information for jwt token and read it .
 #
@@ -10,36 +9,37 @@
 # Ensure the image is deployed on docker.hub
 #
 #
-# AWS AMAZON IAM
+#
 
 # Milestone 2
 # Auth model
-# username, password, email, role, is_active, is_deleted, user_id, user_type (Client), last_login_at, last_login_ip
+# username, password, email, role, is_active, is_deleted, user_id, user_type (Client), last_login_at, last_login_ip # done
 #
 # Role: one of: admin, client
 #
 # User model
-# full_name, age, gender, address, phone_number, profile_picture
-#
+# full_name, age, gender, address, phone_number, profile_picture # done
+
+
 # APIS:
 # Login for admin
 # Login for client
-#     Client after logged in
+#      after logged in
 #         get my profile
 #         get my transactions
 #
-# CLient can only consume his api, and can not consume the admin api
+# CLint can only consume his api, and can not consume the admin api
 # Admin Can consume admin apis
-
-
 # allowed_roles = ['admin| client']
+
+
 #
 #
 #
 #
 #
 #
-#
+#9/
 #
 #
 #

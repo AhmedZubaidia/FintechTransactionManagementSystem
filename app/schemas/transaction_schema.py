@@ -1,13 +1,19 @@
 from marshmallow import Schema, fields, validate
-from app.schemas.user_schema import UserSchema
+from app.models.transaction_model import TransactionCategory, TransactionType
 
 
+# Schema for representing a transaction without any user details
 class TransactionSchema(Schema):
     id = fields.Int(dump_only=True)
     user_id = fields.Int(required=True)
     amount = fields.Float(required=True)
-    category = fields.Str(required=True, validate=[validate.Length(min=1, max=50)])
+    category = fields.Str(
+        required=True,
+        validate=validate.OneOf([category.value for category in TransactionCategory])  # Enum validation for category
+    )
     description = fields.Str(validate=[validate.Length(max=200)])
-    type = fields.Str(required=True, validate=[validate.OneOf(["income", "expense"])])
+    type = fields.Str(
+        required=True,
+        validate=validate.OneOf([type_.value for type_ in TransactionType])  # Enum validation for type (credit/debit)
+    )
     timestamp = fields.DateTime(dump_only=True)
-    user = fields.Nested(UserSchema, dump_only=True)

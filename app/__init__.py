@@ -21,10 +21,13 @@ def create_app(config_class=Config):
 
     from app.routes.user.auth.apis import bp as auth_bp
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
-    from app.routes.user.profile.apis import bp as profile_bp
-    app.register_blueprint(profile_bp, url_prefix='/api/profile')
 
-    from app.routes.transactions.apis import bp as transaction_bp
+    from app.routes.user.profile.apis import bp as profile_bp
+    app.register_blueprint(profile_bp, url_prefix='/api')
+
+    from app.models.auth_model import Auth
+
+    from app.routes.transactions.client.apis import bp as transaction_bp
     app.register_blueprint(transaction_bp, url_prefix='/api/transactions')
 
     return app
