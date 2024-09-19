@@ -34,6 +34,7 @@ def execute(user_id, data):
         transaction_type=transaction_type_enum.value,  # Use the enum value
         description=description
     )
+    new_transaction.save()
     db.session.add(new_transaction)
     db.session.commit()
 
