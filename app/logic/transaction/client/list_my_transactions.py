@@ -1,23 +1,21 @@
 from flask_jwt_extended import get_jwt_identity
 from app.models.transaction_model import TransactionModel
 
+from flask_jwt_extended import get_jwt_identity
+from app.models.transaction_model import TransactionModel
 
-def execute():
+
+def execute(page, per_page):
     client_id = get_jwt_identity()  # Get the client ID from the JWT
 
-    # Fetch all transactions for the client
-    transactions = TransactionModel.query.filter_by(user_id=client_id).all()
+    # Query transactions for the client
+    transactions_query = TransactionModel.query.filter_by(user_id=client_id)
 
-    # Create a list of transactions using the `to_dict()` method for each transaction
-    transactions_report = [transaction.to_dict() for transaction in transactions]
+    # Use pagination correctly (only pass page and per_page)
+    paginated_transactions = transactions_query.paginate(page=page, per_page=per_page, error_out=False)
 
-    # Prepare the final report
-    report = {
-        "user": {
-            "id": client_id,
-        },
-        "transactions": transactions_report,  # Include all transactions
-        "total_transactions": len(transactions_report)  # Optionally, include the total count
-    }
+    # Get the list of items and total count
+    transactions = [transaction.to_dict() for transaction in paginated_transactions.items]
+    total_items = paginated_transactions.total
 
-    return report
+    return transactions, total_items

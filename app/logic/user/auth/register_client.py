@@ -8,7 +8,7 @@ from app.third_parties.telegram.send_new_user_notification import send_new_user_
 from app.utils.exceptions import appConflictError
 
 
-def execute(username, email, password, role="client"):
+def execute(username, email, password, role="client", created_by="system"):
     # Check if the username already exists
     if User.query.filter_by(username=username).first():
         raise appConflictError('Username already exists')
@@ -25,13 +25,11 @@ def execute(username, email, password, role="client"):
         username=username,
         email=email,
         password_hash=hashed_password,
-        created_by=username,
-        modified_by=username  # Set created_by and modified_by to username initially
+        created_by=created_by
     )
 
-    # Commit the new user to the database to generate the user ID
-    db.session.add(new_user)
-    db.session.commit()
+    # Save the user to the database and provide a default created_by
+    new_user.save(is_new=True)  # Passing is_new=True because it's a new record
 
     # Create a new auth record linked to the user
     new_auth = Auth(
@@ -42,15 +40,8 @@ def execute(username, email, password, role="client"):
         user_id=new_user.id  # Link the Auth record to the User record
     )
 
-    # Commit the new auth record to the database
-    db.session.add(new_auth)
-    db.session.commit()
-
-    # Generate a token for the user (for authentication purposes after registration)
-    token_id = create_access_token(identity={
-        'user_id': new_user.id,
-        'role': new_auth.role.value
-    })
+    # Save the auth record, passing the created_by field as 'system' or another admin
+    new_user.save(is_new=True)
 
     chat_id = current_app.config['TELEGRAM_CHAT_ID']
 
