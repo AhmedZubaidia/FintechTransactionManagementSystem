@@ -1,16 +1,15 @@
 from flask import Blueprint
-from app.schemas.user_schema import UserSchema
+from app.schemas.user_schema import UserSchema, ListUsers
 from app.utils.custom_route import custom_route
 
 bp = Blueprint('profile', __name__)
 
 
 # Admin Route to get all users
-@custom_route(bp, '/admin/users', methods=['GET'], schema=None, require_auth=True, allowed_roles="admin",
-              paginate=True)
-def get_all_users_admin(page, per_page):
+@custom_route(bp, '/admin/users', methods=['GET'], schema=ListUsers, require_auth=True, allowed_roles="admin")
+def get_all_users_admin(data):
     from app.logic.user.profile.admin.get_all_users import execute
-    return execute(page, per_page)
+    return execute(**data)
 
 
 # Admin Route to delete a user by ID

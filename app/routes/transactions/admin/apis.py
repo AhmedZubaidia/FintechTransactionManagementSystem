@@ -1,5 +1,5 @@
 from flask import Blueprint
-from app.schemas.transaction_schema import TransactionSchema
+from app.schemas.transaction_schema import TransactionSchema, ListTransactionsSchema
 from app.utils.custom_route import custom_route
 
 bp = Blueprint('admin_transaction', __name__)
@@ -13,11 +13,11 @@ def create_transaction_admin(user_id, data):
     return execute(user_id, data)
 
 
-@custom_route(bp, '/transactions', methods=['GET'], schema=None, require_auth=True, allowed_roles="admin",
-              paginate=True)
-def get_all_transactions_admin(page, per_page):
+@custom_route(bp, '/transactions', methods=['GET'], schema=ListTransactionsSchema, require_auth=True,
+              allowed_roles="admin", paginate=True)
+def get_all_transactions_admin(data):
     from app.logic.transaction.admin.get_all_transactions import execute
-    return execute(page, per_page)
+    return execute(**data)
 
 
 @custom_route(bp, '/transactions/client/<int:client_id>', methods=['GET'], schema=None, require_auth=True,

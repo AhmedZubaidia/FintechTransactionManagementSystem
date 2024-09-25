@@ -26,3 +26,10 @@ class UserSchema(Schema):
     profile_picture = fields.Str(validate=[validate.Length(max=255)])
     preferred_language = fields.Str(validate=[validate.Length(max=10)])
     currency = fields.Str(validate=[validate.Length(max=10)])
+
+
+class ListUsers(Schema):
+    page = fields.Int(load_only=True, load_default=1)
+    per_page = fields.Int(load_only=True, load_default=10, validate=[validate.Range(min=1, max=50)])
+    items = fields.List(fields.Nested(UserSchema), dump_only=True)
+    pagination = fields.Dict(dump_only=True)

@@ -4,13 +4,13 @@ from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from flask_babel import Babel
 from config import Config
-from apscheduler.schedulers.background import BackgroundScheduler
+from app.scheduler import scheduler
+from app.cronjobs import setup_system_wide_scheduler
+import logging
 
 db = SQLAlchemy()
 migrate = Migrate()
 babel = Babel()
-
-scheduler = BackgroundScheduler()
 
 
 def create_app(config_class=Config):
@@ -41,7 +41,7 @@ def create_app(config_class=Config):
     from app.routes.transactions.admin.apis import bp as admin_transaction_bp
     app.register_blueprint(admin_transaction_bp, url_prefix='/api/transactions/admin')
 
-    # Setup the scheduler only once during app initialization
+    # Start the scheduler
     setup_scheduler(app)
 
     return app
@@ -51,3 +51,4 @@ def setup_scheduler(app):
     with app.app_context():
         scheduler.start()
 
+    setup_system_wide_scheduler(app)  # Setup cron jobs
