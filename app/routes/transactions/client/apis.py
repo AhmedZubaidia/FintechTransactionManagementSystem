@@ -6,11 +6,10 @@ bp = Blueprint('client_transaction', __name__)  # Name changed to client_transac
 
 
 # Client Routes
-@custom_route(bp, '/list_my_transactions', methods=['GET'], schema=None, require_auth=True, allowed_roles="client",
-              paginate=True)
-def list_my_transactions(page, per_page):
+@custom_route(bp, '/list_my_transactions', methods=['GET'], schema=TransactionSchema, require_auth=True, allowed_roles="client")
+def list_my_transactions(data):
     from app.logic.transaction.client.list_my_transactions import execute
-    return execute(page, per_page)
+    return execute(**data)
 
 
 @custom_route(bp, '/transactions/<int:id>', methods=['GET'], schema=None, require_auth=True, allowed_roles="client")
