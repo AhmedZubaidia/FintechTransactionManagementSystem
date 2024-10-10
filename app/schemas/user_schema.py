@@ -16,6 +16,7 @@ class LoginSchema(Schema):
 
 class UserSchema(Schema):
     id = fields.Int()
+    user_id = fields.Int(load_only=True)
     username = fields.Str()
     email = fields.Email()
     full_name = fields.Str()
@@ -26,6 +27,7 @@ class UserSchema(Schema):
     profile_picture = fields.Str(validate=[validate.Length(max=255)])
     preferred_language = fields.Str(validate=[validate.Length(max=10)])
     currency = fields.Str(validate=[validate.Length(max=10)])
+    deleted_at = fields.DateTime(required=False)
 
 
 class ListUsers(Schema):

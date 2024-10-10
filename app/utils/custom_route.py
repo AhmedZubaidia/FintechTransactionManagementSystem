@@ -1,22 +1,26 @@
 import traceback
 from functools import wraps
 from flask import request, jsonify, make_response
-from flask_jwt_extended import verify_jwt_in_request, get_jwt
+from flask_jwt_extended import verify_jwt_in_request, get_jwt, get_jwt_identity
 from jwt import ExpiredSignatureError
 import inspect
 from app.schemas.paginatedSchema import PaginatedSchema
 from app.third_parties.telegram.send_long_message import send_long_message
 from app.utils.exceptions import appForbiddenError, appBadRequestError, ApplicationError
+from marshmallow import ValidationError
 
 
-def custom_route(bp, rule, *, schema=None, require_auth=False, allowed_roles=None, paginate=False, **options):
+def custom_route(bp, rule, *, schema=None, require_auth=False, allowed_roles=None, paginate=False,
+                 append_token_key=None, **options):
     def decorator(f):
         @wraps(f)
         def wrapped(*args, **kwargs):
             try:
                 # If authentication is required, verify the JWT first
+                user_id = None
                 if require_auth:
                     verify_jwt_in_request()
+                    user_id = get_jwt_identity()
 
                     # Role-based access control
                     if allowed_roles is not None:
@@ -43,23 +47,28 @@ def custom_route(bp, rule, *, schema=None, require_auth=False, allowed_roles=Non
                 files = request.files.to_dict()
                 data.update(files)
 
-                is_paginate = 'page' in data and 'per_page' in data
+                if append_token_key:
+                    for key in append_token_key:
+                        if key == 'user_id' and user_id:
+                            data['user_id_token'] = user_id
 
-                if is_paginate or request.method == 'GET':
+                if paginate:
                     data = PaginatedSchema(item_schema=schema).load(data)
                 else:
                     data = schema().load(data)
 
                 # Check if `f` accepts arguments using `inspect.signature`
                 func_signature = inspect.signature(f)
+                valid_params = func_signature.parameters.keys()
 
-                if len(func_signature.parameters) == 0:
-                    response = f()
+                args = []
+                kwargs = {}
 
-                else:
-                    response = f(data)
+                if 'data' in valid_params:
+                    args.append(data)
+                response = f(*args, **kwargs) if len(func_signature.parameters) > 0 else f()
 
-                if (is_paginate or request.method == 'GET') and len(func_signature.parameters) != 0:
+                if paginate:
                     page = int(data.get('page', 1))
                     per_page = int(data.get('per_page', 10))
 
@@ -89,6 +98,9 @@ def custom_route(bp, rule, *, schema=None, require_auth=False, allowed_roles=Non
             except ApplicationError as e:
 
                 return make_response(jsonify({'errors': str(e)}), e.status_code)
+
+            except ValueError as e:
+                return make_response(jsonify({'errors': str(e)}), 400)
 
 
             except Exception as e:

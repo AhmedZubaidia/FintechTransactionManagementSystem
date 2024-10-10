@@ -1,13 +1,13 @@
 from app.models.transaction_model import TransactionModel
 
 
-def execute(client_id):
-    transactions = TransactionModel.query.filter_by(user_id=client_id).all()
+def execute(user_id):
+    transactions = TransactionModel.query.filter_by(user_id=user_id).all()
 
     if not transactions:
         return {
             "user": {
-                "id": client_id,
+                "id": user_id,
                 "name": "Unknown"  # Adjust based on your user model
             },
             "credit": 0,
@@ -35,7 +35,7 @@ def execute(client_id):
     # Prepare the final report
     report = {
         "user": {
-            "id": client_id,
+            "id": user_id,
             "name": "client"  # Adjust based on your user model
         },
         "credit": credit,

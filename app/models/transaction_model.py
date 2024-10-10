@@ -32,6 +32,9 @@ class TransactionModel(BaseModel):
     session_id = db.Column(db.String(255), nullable=True)
     device_id = db.Column(db.String(255), nullable=True)
 
+    # Soft delete field
+    deleted_at = db.Column(db.DateTime, nullable=True, default=None)
+
     # Relationship to the User model (delayed import)
     @property
     def user(self):
@@ -49,8 +52,22 @@ class TransactionModel(BaseModel):
             "transaction_type": self.transaction_type.value,  # Convert Enum to its value (e.g., 'credit')
             "timestamp": self.timestamp.isoformat(),
             "session_id": self.session_id,
-            "device_id": self.device_id
+            "device_id": self.device_id,
+            "deleted_at": self.deleted_at.isoformat() if self.deleted_at else None
         }
 
     def __repr__(self):
         return f'<Transaction {self.amount} - {self.category.value}>'
+
+    # Soft delete method
+    def soft_delete(self):
+        self.deleted_at = datetime.utcnow()
+
+    # Restore a soft-deleted transaction
+    def restore(self):
+        self.deleted_at = None
+
+    # Check if transaction is soft deleted
+    @property
+    def is_deleted(self):
+        return self.deleted_at is not None

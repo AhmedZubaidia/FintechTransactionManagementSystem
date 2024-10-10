@@ -12,6 +12,9 @@ class PaginatedSchema(Schema):
     # Metadata for pagination (e.g., total items, total pages, next/prev page)
     pagination = fields.Dict(dump_only=True)
 
+    user_id = fields.Int(load_only=True)
+    user_id_token = fields.Int(load_only=True)
+
     def __init__(self, item_schema, *args, **kwargs):
         # Dynamically set the items field with the passed schema
         super().__init__(*args, **kwargs)

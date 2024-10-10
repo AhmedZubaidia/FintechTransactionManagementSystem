@@ -1,17 +1,15 @@
-from flask_jwt_extended import get_jwt_identity
 from app.models.transaction_model import TransactionModel
 
 
-def execute():
-    client_id = get_jwt_identity()  # Get the client ID from the JWT
+def execute(user_id_token):
 
     # Fetch all transactions for the client
-    transactions = TransactionModel.query.filter_by(user_id=client_id).all()
+    transactions = TransactionModel.query.filter_by(user_id=user_id_token).all()
 
     if not transactions:
         return {
             "user": {
-                "id": client_id,
+                "id": user_id_token,
                 "name": "Unknown"  # Adjust based on your user model
             },
             "credit": 0,
@@ -39,7 +37,7 @@ def execute():
     # Prepare the final report
     report = {
         "user": {
-            "id": client_id,
+            "id": user_id_token,
             "name": "client"  # Adjust based on your user model
         },
         "credit": credit,
