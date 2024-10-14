@@ -2,7 +2,6 @@ from datetime import datetime
 from app import db
 from flask_jwt_extended import decode_token
 from app.models.base_model import BaseModel  # Import BaseModel
-
 import enum
 from sqlalchemy import Enum as SQLAlchemyEnum
 
@@ -57,6 +56,9 @@ class User(BaseModel):  # Inherit from BaseModel
     # Currency using Enum
     currency = db.Column(SQLAlchemyEnum(Currency), nullable=True, default=Currency.USD)
 
+    # Soft delete field
+    deleted_at = db.Column(db.DateTime, nullable=True, default=None)
+
     # Roles attribute (assuming roles are still used)
     roles = db.Column(db.String(255), nullable=True)
 
@@ -68,3 +70,16 @@ class User(BaseModel):  # Inherit from BaseModel
     def transactions(self):
         from app.models.transaction_model import TransactionModel  # Delayed import
         return db.relationship('TransactionModel', back_populates='user', lazy="dynamic")
+
+    # Soft delete method
+    def soft_delete(self):
+        self.deleted_at = datetime.utcnow()
+
+    # Restore a soft-deleted user
+    def restore(self):
+        self.deleted_at = None
+
+    # Check if user is soft deleted
+    @property
+    def is_deleted(self):
+        return self.deleted_at is not None

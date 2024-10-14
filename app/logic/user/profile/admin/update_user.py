@@ -5,7 +5,7 @@ from app import db
 def execute(user_id, **data):
     user = User.query.get(user_id)
     if not user:
-        return dict(errors="User not found"), 404
+        return dict(errors="User not found")
 
     for key, value in data.items():
         setattr(user, key, value)

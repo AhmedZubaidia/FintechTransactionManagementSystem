@@ -1,13 +1,18 @@
-# app/logic/transaction/admin/delete_transaction.py
+# app/logic/transaction/client/delete_transaction.py
 from app.models.transaction_model import TransactionModel
 from app import db
 
 
-def execute(transaction_id):
-    transaction = TransactionModel.query.get(transaction_id)
-    if not transaction:
-        return {"error": "Transaction not found"}, 404
+def execute(id, user_id_token):
+    transaction = TransactionModel.query.get(id)
 
-    db.session.delete(transaction)
+    # Check if the transaction exists, belongs to the current user, and is not already deleted
+    if not transaction or transaction.is_deleted:
+        return {"error": "Transaction not found or be deleted or not belong to the current user"}
+
+    # Perform soft delete
+    transaction.save(user_id_token)
+    transaction.soft_delete()
     db.session.commit()
-    return {"message": "Transaction deleted successfully"}
+
+    return {"message": "Transaction soft deleted successfully"}

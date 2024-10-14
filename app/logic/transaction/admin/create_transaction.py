@@ -8,34 +8,34 @@ from app.utils.exceptions import appNotFoundError
 from app.models.transaction_model import TransactionCategory, TransactionType
 
 
-def execute(user_id, data):
+def execute(**data):
     amount = data.get('amount')
     category = data.get('category')
     transaction_type = data.get('transaction_type')
     description = data.get('description', None)
+    user_id = data.get('user_id')
+    user_id_token = data.get('user_id_token')
 
     # Ensure the user exists
     user = User.query.get(user_id)
-    if not user:
-        raise appNotFoundError(f"User with ID {user_id} not found")
+    if not user or user.is_deleted:
+        raise appNotFoundError(f"User with ID {user_id} not found or has been deleted")
 
-    # Convert category and transaction_type to their enum types
-    try:
-        category_enum = TransactionCategory[category.upper()]  # Convert string to enum
-        transaction_type_enum = TransactionType[transaction_type.upper()]  # Convert string to enum
-    except KeyError:
-        raise appNotFoundError("Invalid category or transaction type")
+    # Validate category and transaction type
+    if not isinstance(category, TransactionCategory):
+        raise ValueError("Invalid category")
+    if not isinstance(transaction_type, TransactionType):
+        raise ValueError("Invalid transaction type")
 
-    # Create the transaction
     new_transaction = TransactionModel(
         user_id=user_id,
         amount=amount,
-        category=category_enum.value,  # Use the enum value
-        transaction_type=transaction_type_enum.value,  # Use the enum value
+        category=category.value,  # Use the enum value
+        transaction_type=transaction_type.value,  # Use the enum value
         description=description
     )
-    new_transaction.save()
+    new_transaction.save(user_id_token)
     db.session.add(new_transaction)
     db.session.commit()
 
-    return new_transaction.to_dict()
+    return new_transaction

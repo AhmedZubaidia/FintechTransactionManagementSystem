@@ -10,27 +10,28 @@ from app.utils.exceptions import appNotFoundError
 from app.models.transaction_model import TransactionCategory, TransactionType
 
 
-def execute(amount, category, description=None, transaction_type=None):
-    user_id = get_jwt_identity()
+def execute(amount, category, description=None, transaction_type=None , user_id_token=None):
 
     # Ensure the user exists
-    user = User.query.get(user_id)
+    user = User.query.get(user_id_token)
     if not user:
-        raise appNotFoundError(f"User with ID {user_id} not found")
+        raise appNotFoundError(f"User with ID {user_id_token} not found")
 
-    # Convert category and transaction_type to their enum types
-    category_enum = TransactionCategory[category.upper()]  # Convert string to enum
-    transaction_type_enum = TransactionType[transaction_type.upper()]  # Convert string to enum
+    # Validate category and transaction type
+    if not isinstance(category, TransactionCategory):
+        raise ValueError("Invalid category")
+    if not isinstance(transaction_type, TransactionType):
+        raise ValueError("Invalid transaction type")
 
     # Create the transaction
     new_transaction = TransactionModel(
-        user_id=user_id,
+        user_id=user_id_token,
         amount=amount,
-        category=category_enum.value,  # Use the enum value
-        transaction_type=transaction_type_enum.value,  # Use the enum value
+        category=category.value,  # Use the enum value
+        transaction_type=transaction_type.value,  # Use the enum value
         description=description
     )
-    new_transaction.save(user_id,is_new=True)
+    new_transaction.save(user_id_token, is_new=True)
 
     chat_id = current_app.config['TELEGRAM_CHAT_ID']
     message = f"New transaction recorded for user {user.username} with amount {amount}"

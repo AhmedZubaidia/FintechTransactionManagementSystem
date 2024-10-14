@@ -17,7 +17,7 @@ def setup_system_wide_scheduler(app):
     scheduler.add_job(
         func=send_periodic_summary_for_all_users,
         trigger="interval",
-        minutes=1,  # Change this to 24 * 60 for once a day
+        days=1,  # Change this to 24 * 60 for once a day
         args=[app],  # Pass the app's current object
         id=job_id
     )

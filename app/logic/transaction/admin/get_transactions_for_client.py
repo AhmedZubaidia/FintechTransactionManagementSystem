@@ -2,12 +2,12 @@ from app.models.transaction_model import TransactionModel
 from app.utils.exceptions import appNotFoundError
 
 
-def execute(client_id):
-    transactions = TransactionModel.query.filter_by(user_id=client_id).all()
-    if not transactions:
-        raise appNotFoundError(f"User with ID {client_id} has no transactions")
+def execute(user_id, page, per_page):
+    transactions = TransactionModel.query.filter_by(user_id=user_id).paginate(page=page, per_page=per_page, error_out=False)
 
-    all_transactions_for_user = [transaction.to_dict() for transaction in transactions]
-    return {
-        "transactions": all_transactions_for_user
-    }
+    # Check if there are transactions for the user
+    if transactions.total == 0:
+        raise appNotFoundError(f"User with ID {user_id} has no transactions")
+
+    # Return the pagination object directly
+    return transactions
