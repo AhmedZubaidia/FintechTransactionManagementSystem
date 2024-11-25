@@ -71,25 +71,32 @@ This project aims to develop a web-based transaction management system that allo
 ## Setup Instructions
 
 1. Clone the repository:
-    ```sh
+    ```bash
+    git clone https://github.com/AhmedZubaidia/FintechTransactionManagementSystem.git
     ```
 2. Navigate to the project directory:
-    ```sh
+    ```bash
+    cd FintechTransactionManagementSystem
     ```
 3. Create and activate a virtual environment:
-    ```sh
-
+    ```bash
+    python3 -m venv venv
+    source venv/bin/activate
     ```
 4. Install the dependencies:
-    ```sh
+    ```bash
+    pip install -r requirements.txt
     ```
-5. Set up the MySQL database and configure environment variables.
+5. Set up the MySQL database and configure environment variables in a `.env` file.
 6. Initialize the database:
-    ```sh
-
+    ```bash
+    flask db init
+    flask db migrate
+    flask db upgrade
     ```
 7. Run the application:
-    ```sh
+    ```bash
+    flask run
     ```
 
 ## Usage Instructions
@@ -102,15 +109,15 @@ This project aims to develop a web-based transaction management system that allo
 
 1. Fork the repository.
 2. Create a new branch:
-    ```sh
+    ```bash
     git checkout -b feature-branch
     ```
 3. Make your changes and commit them:
-    ```sh
+    ```bash
     git commit -m "Description of changes"
     ```
 4. Push to the branch:
-    ```sh
+    ```bash
     git push origin feature-branch
     ```
 5. Create a pull request.
